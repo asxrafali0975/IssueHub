@@ -1,0 +1,4 @@
+SECRET_CODE = "#9272ndkhs@(*&2dlnd+108indviw"
+ALGO = "HS256"
+MAIL_USERNAME="ashrafalistudy@gmail.com",
+MAIL_PASSWORD = "ncnp zpsu dyeg mrsb",
