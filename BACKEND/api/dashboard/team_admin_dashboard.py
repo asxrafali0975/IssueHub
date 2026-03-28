@@ -53,7 +53,7 @@ async def verify_jwt_token(request: Request):
 
 # fetch all complaints
 @team_router.get("/team_dashboard")
-async def team_dashboard(page: int = 1, limit: int = 10):
+async def team_dashboard(page: int = 1, limit: int = 10 , user_data: tuple = Depends(verify_jwt_token)):
     skip = (page - 1) * limit
     complaints = await Complaints_collection.find(
         {"forwarded": False}
@@ -95,7 +95,7 @@ async def forward_complaint(id: GetID , user_data: tuple = Depends(verify_jwt_to
 
 
 @team_router.get("/get_forwarded")
-async def get_forwarded():
+async def get_forwarded(user_data: tuple = Depends(verify_jwt_token)):
 
     complaints = await Complaints_collection.find(
         {
@@ -112,7 +112,7 @@ async def get_forwarded():
 
 
 @team_router.post("/resolve/{cid}")
-async def resolve_complaint(cid: str):
+async def resolve_complaint(cid: str , user_data: tuple = Depends(verify_jwt_token)):
 
     await Complaints_collection.update_one(
         {"_id": ObjectId(cid)},

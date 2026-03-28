@@ -34,22 +34,6 @@ async def RegisterRoute(usr: User,response: Response):
         if user_exists:
             raise HTTPException(status_code=409, detail="Email Already Registered")
         else:
-
-            if email=="ashrafalistudy@gmail.com":
-                hashed_password = hash_password_func(password)
-                await User_collection.insert_one(
-            {
-                "email": email,
-                  "password": hashed_password,
-                    "role":"team",
-                    "complaints":[]       
-            }
-                )
-                return {"success": "team"}
-                
-
-            
-
             otp = generate_otp()
 
             #otp bhej denge celery ko 
@@ -91,7 +75,7 @@ async def LoginRoute(usr: User, response: Response):
             if check_password_func(password, hashedpw):
                 token = token_generator_func(email, user_exists["role"])
                 cookie_set(response,"access_token",token,1000000)
-                return {"message": "cookie set"}
+                return {"role": user_exists["role"]}
             else:
                 raise HTTPException(status_code=401, detail="Wrong email or password")
         elif not user_exists:

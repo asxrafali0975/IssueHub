@@ -2,12 +2,11 @@ import React, { useState, useTransition } from 'react'
 import Navbar from '../Component/Navbar'
 import axios from 'axios'
 import Alert from '../Component/Alert'
-import { useNavigate  , Link} from 'react-router'
+import { useNavigate, Link } from 'react-router'
 
 function RegisterPage() {
 
   const navigate = useNavigate()
-  const [pending, startTransition] = useTransition()
   const [email, setEmail] = useState("");
   const [password, setpassword] = useState("");
   const [dataToDisplay, setData] = useState("")
@@ -46,25 +45,10 @@ function RegisterPage() {
     }, { withCredentials: true })
       .then((resp) => {
         if (resp.status === 201) {
-
-          if (resp.data.success==="team"){
-            navigate("/dashboard")
-          }
-          
-
-          setData("Please Enter OTP Sent To Your Respective Email Id")
-          
-          if (resp.data.redirect==="mail_sent"){
+          if (resp.data.redirect === "mail_sent") {
             navigate("/OTP")
           }
-
-
         }
-
-
-        setCls("alert alert-warning")
-        setalert(true)
-
       })
       .catch((err) => {
 

@@ -2,7 +2,7 @@ import React, { useState, useTransition } from 'react'
 import axios from 'axios'
 import Alert from '../Component/Alert'
 import Navbar from '../Component/Navbar'
-import { useNavigate ,Link } from 'react-router'
+import { useNavigate, Link } from 'react-router'
 
 
 
@@ -31,7 +31,8 @@ function LoginPage() {
       return
     }
 
-    if (!trimmedEmail.endsWith("@axiscolleges.in")) {
+    
+    if (trimmedEmail!="issuehub@gmail.com" &&  !trimmedEmail.endsWith("@axiscolleges.in")) {
 
       setData("Enter Correct Email ")
       setCls("alert alert-warning")
@@ -45,24 +46,10 @@ function LoginPage() {
       "password": trimmedPassword
     }, { withCredentials: true })
       .then((resp) => {
-        if (resp.status === 200) {
-          if (resp.data.message) {
-            console.log(resp.data.message)
-            setData("Login Successfull Redirecting to Dashboard")
-            setCls("alert alert-success")
-            setalert(true)
-            setTimeout(() => {
-              navigate("/dashboard")
-            }, 2000) // 1.5 second delay to show success message
-
-
-          }
-
-        }
-
-        setCls("alert alert-success")
-        setalert(true)
-
+        const role = resp.data.role
+        if (role === "team") navigate("/td")
+        else if (role === "admin") navigate("/ad")
+        else navigate("/dashboard")
       })
       .catch((err) => {
 
@@ -154,7 +141,7 @@ function LoginPage() {
                 </button>
 
                 <p className="mt-5 text-center text-xs text-slate-500">
-                 Dont have an account ? <span> <Link to="/register">Sign Up</Link> </span>
+                  Dont have an account ? <span> <Link to="/register">Sign Up</Link> </span>
                 </p>
               </form>
             </div>

@@ -25,11 +25,17 @@ async def verify_jwt_token(request: Request):
         email = payload["email"]
         role = payload["role"]
         print(email, role)
-        if email is None or role is None:
+        if email is None or role is None :
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid_token_payload"
             )
         # return this to endpoint
+        if role!="student":
+            raise HTTPException(
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid_token"
+            )
+
+    
         return (email, role)
 
     except jwt.ExpiredSignatureError:

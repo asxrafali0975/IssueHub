@@ -1,8 +1,7 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ViewComplaint from "../Component/ViewComplaint";
-import { Navigate } from "react-router";
-
+import { useNavigate } from "react-router";
 function TeamDashboard() {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [complaints, setComplaints] = useState([]);
@@ -16,50 +15,48 @@ function TeamDashboard() {
   const fetchComplaints = async (page) => {
     try {
       const resp = await axios.get(
-        `http://localhost:8000/team/team_dashboard?page=${page}` , {withCredentials:true}
+        `http://localhost:8000/team/team_dashboard?page=${page}`, { withCredentials: true }
       );
       setComplaints(resp.data);
     } catch (err) {
-    if (err.response) {
-      console.log("Error:", err.response.data.detail);
-      if (err.response.status === 401) {
+      if (err.response) {
+        console.log("Error:", err.response.data.detail);
+        if (err.response.status === 401) {
 
-       if(err.response.data.detail=== "Not_authenticated"){
-        navigate("/")
-        
-       }
-       else if(err.response.data.detail=== "unauthorized"){
-         navigate("/")
+          if (err.response.data.detail === "Not_authenticated") {
+            navigate("/")
 
-       }
-        alert("Login expired / Unauthorized");
+          }
+          else if (err.response.data.detail === "unauthorized") {
+            navigate("/")
+
+          }
+          alert("Login expired / Unauthorized");
+        }
+
+      } else if (err.request) {
+        console.log("No response from server");
+      } else {
+        console.log("Error:", err.message);
       }
-
-    } else if (err.request) {
-      console.log("No response from server");
-    } else {
-      console.log("Error:", err.message);
     }
-  }
   };
 
-  const forwardComplaint = async (id) => {
+ const forwardComplaint = async (id) => {
     try {
-      await axios.post(
-        `http://localhost:8000/team/forward_complaint`,
-        { id },
-        { withCredentials: true }
-      );
-
-      const updated = complaints.map((c) =>
-        c._id === id ? { ...c, forwarded: true } : c
-      );
-
-      setComplaints(updated);
+        await axios.post(
+            `http://localhost:8000/team/forward_complaint`,
+            { id },
+            { withCredentials: true }
+        );
+        setComplaints(prev =>
+            prev.map((c) => c._id === id ? { ...c, forwarded: true } : c)
+        );
     } catch (err) {
-      console.log(err);
+        if (err.response?.status === 401) navigate("/");
+        else alert("Failed to forward complaint");
     }
-  };
+};
 
   const viewMore = (complaint) => {
     setSelectedComplaint(complaint);
@@ -91,7 +88,7 @@ function TeamDashboard() {
               <figure className="bg-red-800  w-[30%]">
                 <img
 
-              
+
                   src={`http://localhost:8000/${c.image}`}
                   className="h-[100%] w-[100%]"
                 />
