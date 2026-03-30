@@ -47,6 +47,7 @@ function LoginPage() {
     }, { withCredentials: true })
       .then((resp) => {
         const role = resp.data.role
+        console.log(role)
         if (role === "team") navigate("/td")
         else if (role === "admin") navigate("/ad")
         else navigate("/dashboard")

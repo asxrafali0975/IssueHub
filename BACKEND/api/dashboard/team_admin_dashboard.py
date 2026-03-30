@@ -1,11 +1,10 @@
-from fastapi import APIRouter , Request , HTTPException , status , Depends
+from fastapi import APIRouter, Request, HTTPException, status, Depends
 from core.security import *
 from core.database import Complaints_collection
 from models.UserModel import GetID
 from bson import ObjectId
 
 team_router = APIRouter()
-
 
 
 async def verify_jwt_token(request: Request):
@@ -23,15 +22,18 @@ async def verify_jwt_token(request: Request):
         payload = get_token_func(token)
         email = payload["email"]
         role = payload["role"]
-        
+
         if email is None or role is None:
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid_token_payload"
             )
         
-        if role!="team":
+        roles_allowed = ["admin", "team"]
+
+        if role not in roles_allowed:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="unauthorized"
+                #means not allowed in this route
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
             )
         # return this to endpoint
         return (email, role)
@@ -50,39 +52,51 @@ async def verify_jwt_token(request: Request):
         )
 
 
-
 # fetch all complaints
 @team_router.get("/team_dashboard")
-async def team_dashboard(page: int = 1, limit: int = 10 , user_data: tuple = Depends(verify_jwt_token)):
+async def team_dashboard(
+    page: int = 1, limit: int = 10, user_data: tuple = Depends(verify_jwt_token)
+):
+    email, role = user_data
+    if role != "team":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
+        )
+    
     skip = (page - 1) * limit
-    complaints = await Complaints_collection.find(
-        {"forwarded": False}
-    ).skip(skip).limit(limit).to_list(length=limit)
+    complaints = (
+        await Complaints_collection.find({"forwarded": False})
+        .skip(skip)
+        .limit(limit)
+        .to_list(length=limit)
+    )
 
     for c in complaints:
         c["_id"] = str(c["_id"])
-        c['user_id'] = str(c['user_id'] )
+        c["user_id"] = str(c["user_id"])
 
     return complaints
 
 
 # forward complaint or team dashboard
-#check if token exist , if not exist login if exist check role and etc if role == team then allow else reject
+# check if token exist , if not exist login if exist check role and etc if role == team then allow else reject
+
 
 @team_router.post("/forward_complaint")
-async def forward_complaint(id: GetID , user_data: tuple = Depends(verify_jwt_token)):
+async def forward_complaint(id: GetID, user_data: tuple = Depends(verify_jwt_token)):
     email, role = user_data
+    if role != "team":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
+        )
     cid = id.id
 
-    complaint = await Complaints_collection.find_one(
-        {"_id": ObjectId(cid)}
-    )
+    complaint = await Complaints_collection.find_one({"_id": ObjectId(cid)})
 
     if complaint:
 
         await Complaints_collection.update_one(
-            {"_id": ObjectId(cid)},
-            {"$set": {"forwarded": True}}
+            {"_id": ObjectId(cid)}, {"$set": {"forwarded": True}}
         )
 
         complaint["_id"] = str(complaint["_id"])
@@ -96,12 +110,15 @@ async def forward_complaint(id: GetID , user_data: tuple = Depends(verify_jwt_to
 
 @team_router.get("/get_forwarded")
 async def get_forwarded(user_data: tuple = Depends(verify_jwt_token)):
+    email, role = user_data
+
+    if role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
+        )
 
     complaints = await Complaints_collection.find(
-        {
-            "forwarded": True,
-            "status": "pending"
-        }
+        {"forwarded": True, "status": "pending"}
     ).to_list(length=None)
 
     for c in complaints:
@@ -112,11 +129,16 @@ async def get_forwarded(user_data: tuple = Depends(verify_jwt_token)):
 
 
 @team_router.post("/resolve/{cid}")
-async def resolve_complaint(cid: str , user_data: tuple = Depends(verify_jwt_token)):
+async def resolve_complaint(cid: str, user_data: tuple = Depends(verify_jwt_token)):
+    email, role = user_data
+
+    if role != "admin":
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
+        )
 
     await Complaints_collection.update_one(
-        {"_id": ObjectId(cid)},
-        {"$set": {"status": "resolved"}}
+        {"_id": ObjectId(cid)}, {"$set": {"status": "resolved"}}
     )
 
     return {"message": "Complaint resolved"}

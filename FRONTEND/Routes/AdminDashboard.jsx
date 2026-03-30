@@ -14,22 +14,29 @@ function AdminDashboard() {
         axios.get("http://localhost:8000/team/get_forwarded", {
             withCredentials: true
         })
-        .then((resp) => {
-            setComplaints(resp.data);
-            setLoading(false);
-        })
-        .catch((err) => {
-            setLoading(false);
-            if (!err.response) {
-                setError("Server not reachable");
-            } else if (err.response.status === 401) {
-                navigate("/");
-            } else if (err.response.status === 500) {
-                setError("Internal server error");
-            } else {
-                setError("Something went wrong");
-            }
-        });
+            .then((resp) => {
+                console.log(resp.data)
+                setComplaints(resp.data);
+                setLoading(false);
+            })
+            .catch((err) => {
+                setLoading(false);
+                if (!err.response) {
+                    setError("Server not reachable");
+                    return;
+                }
+                const detail = err.response.data.detail; // ✅ safe now
+                if (err.response.status === 401) {
+                    if (detail === "no permission to access this route") {
+                        alert("You don't have permission to access this page");
+                    }
+                    navigate("/");
+                } else if (err.response.status === 500) {
+                    setError("Internal server error");
+                } else {
+                    setError("Something went wrong");
+                }
+            });
     }, []);
 
     const resolveComplaint = async (id) => {

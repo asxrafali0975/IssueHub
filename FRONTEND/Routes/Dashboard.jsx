@@ -63,6 +63,10 @@ function Dashboard() {
           setCls("alert alert-error");
           setalert(true);
         } else if (err.response.status === 401) {
+          if (err.response.data.detail === "no permission to access this route") {
+            alert("you dont have permissions to access this page")
+
+          }
           navigate("/");
         } else if (err.response.status === 500) {
           setCls("alert alert-error");
@@ -113,7 +117,17 @@ function Dashboard() {
       setImage(null);
       setShowForm(false);
 
-      window.location.reload()
+      const newComplaint = {
+        title,
+        desc,
+        category,
+        status: "pending",
+        date: new Date().toLocaleDateString("en-GB"),
+        _id: Date.now().toString(),
+        user_id: "",
+        image: null
+      }
+      setData(prev => [...prev, newComplaint])
 
     } catch (err) {
       console.log(err);

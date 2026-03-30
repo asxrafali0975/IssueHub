@@ -23,15 +23,22 @@ function TeamDashboard() {
         console.log("Error:", err.response.data.detail);
         if (err.response.status === 401) {
 
+          if (err.response.data.detail=== "no permission to access this route") {
+            alert("you dont have permissions to access this page")
+            navigate("/")
+            return
+          }
+
           if (err.response.data.detail === "Not_authenticated") {
             navigate("/")
+             alert("Login expired / Unauthorized");
 
           }
           else if (err.response.data.detail === "unauthorized") {
             navigate("/")
+            alert("Login expired / Unauthorized");
 
           }
-          alert("Login expired / Unauthorized");
         }
 
       } else if (err.request) {
@@ -42,21 +49,21 @@ function TeamDashboard() {
     }
   };
 
- const forwardComplaint = async (id) => {
+  const forwardComplaint = async (id) => {
     try {
-        await axios.post(
-            `http://localhost:8000/team/forward_complaint`,
-            { id },
-            { withCredentials: true }
-        );
-        setComplaints(prev =>
-            prev.map((c) => c._id === id ? { ...c, forwarded: true } : c)
-        );
+      await axios.post(
+        `http://localhost:8000/team/forward_complaint`,
+        { id },
+        { withCredentials: true }
+      );
+      setComplaints(prev =>
+        prev.map((c) => c._id === id ? { ...c, forwarded: true } : c)
+      );
     } catch (err) {
-        if (err.response?.status === 401) navigate("/");
-        else alert("Failed to forward complaint");
+      if (err.response?.status === 401) navigate("/");
+      else alert("Failed to forward complaint");
     }
-};
+  };
 
   const viewMore = (complaint) => {
     setSelectedComplaint(complaint);

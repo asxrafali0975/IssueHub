@@ -3,10 +3,7 @@ from fastapi.responses import RedirectResponse
 from core.database import User_collection , Complaints_collection
 from models.UserModel import User
 from core.security import *
-import jwt
-import os
-import shutil
-
+import jwt , os , uuid , aiofiles
 dash_router = APIRouter()
 
 async def verify_jwt_token(request: Request):
@@ -25,14 +22,19 @@ async def verify_jwt_token(request: Request):
         email = payload["email"]
         role = payload["role"]
         print(email, role)
+
+
         if email is None or role is None :
             raise HTTPException(
                 status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid_token_payload"
             )
         # return this to endpoint
-        if role!="student":
+        roles_allowed = ["student"]
+
+        if role not in roles_allowed:
             raise HTTPException(
-                status_code=status.HTTP_401_UNAUTHORIZED, detail="Invalid_token"
+                #means not allowed in this route
+                status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
             )
 
     
@@ -94,6 +96,7 @@ async def submit_complaint(
     
 ):
     try:
+        
 
         email, role = user_data
         image_path = None
@@ -102,13 +105,12 @@ async def submit_complaint(
 
         if image:
 
-            import uuid
-
             filename = f"{uuid.uuid4()}_{image.filename}"
             file_location = f"uploads/{filename}"
 
-            with open(file_location, "wb") as buffer:
-                shutil.copyfileobj(image.file, buffer)
+            async with aiofiles.open(file_location, "wb") as buffer:
+                content = await image.read()
+                await buffer.write(content)
 
             image_path = file_location
 
