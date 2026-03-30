@@ -32,7 +32,7 @@ function LoginPage() {
     }
 
     
-    if (trimmedEmail!="issuehub@gmail.com" &&  !trimmedEmail.endsWith("@axiscolleges.in")) {
+    if (trimmedEmail!="team@issuehub.in" &&  !trimmedEmail.endsWith("@axiscolleges.in")) {
 
       setData("Enter Correct Email ")
       setCls("alert alert-warning")
