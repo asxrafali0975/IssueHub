@@ -11,7 +11,7 @@ function RegisterPage() {
   const [password, setpassword] = useState("");
   const [dataToDisplay, setData] = useState("")
   const [clsSetter, setCls] = useState("")
-  const [pending ,]
+  const [pending, startTransition] = useTransition()
 
   const [Openalert, setalert] = useState(false)
 
