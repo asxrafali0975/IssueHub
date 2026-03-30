@@ -138,11 +138,11 @@ function LoginPage() {
                     : "bg-[#1152d4] hover:bg-[#0b3aa4] active:bg-[#092f86]"
                     }`}
                 >
-                  Sign In
+                  Login
                 </button>
 
                 <p className="mt-5 text-center text-xs text-slate-500">
-                  Dont have an account ? <span> <Link to="/register">Sign Up</Link> </span>
+                  Dont have an account ? <span className='text-[#1152d4]'> <Link to="/register">Register</Link> </span>
                 </p>
               </form>
             </div>

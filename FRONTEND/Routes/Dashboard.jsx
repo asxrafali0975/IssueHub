@@ -5,6 +5,7 @@ import { useNavigate } from "react-router";
 import axios from "axios";
 
 const CATEGORY_OPTIONS = [
+  "Select a category...",
   "Infrastructure",
   "Faculty",
   "Administration",
@@ -150,10 +151,10 @@ function Dashboard() {
           </div>
 
           <button
-            className="mt-2 sm:mt-0 px-6 py-2 bg-gradient-to-r from-sky-600 via-blue-500 to-indigo-500 hover:to-pink-500 transition text-white font-semibold rounded-lg shadow-lg text-base"
+            className="mt-2 sm:mt-0 px-6 py-2 hover:bg-blue-500 transition text-white font-semibold rounded-lg shadow-lg text-base bg-blue-700"
             onClick={() => setShowForm(!showForm)}
           >
-            {showForm ? "Back to Dashboard" : "Submit Complaint"}
+            {showForm ? "Back to Dashboard" : "Add Complaint"}
           </button>
 
         </div>
@@ -185,6 +186,7 @@ function Dashboard() {
                     className="border rounded-lg px-3 py-2 w-full"
                     value={category}
                     onChange={(e) => setCategory(e.target.value)}
+                    required
                   >
                     {CATEGORY_OPTIONS.map((cat) => (
                       <option key={cat}>{cat}</option>
