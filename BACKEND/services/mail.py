@@ -8,7 +8,6 @@ app = FastAPI()
 conf = ConnectionConfig(
     MAIL_USERNAME="ashrafalistudy@gmail.com",
     MAIL_PASSWORD = "vslc pzsx guoi hvsn",
-
     MAIL_FROM="youremail@gmail.com",
     MAIL_PORT=587,
     MAIL_SERVER="smtp.gmail.com",
