@@ -16,5 +16,3 @@ conf = ConnectionConfig(
     VALIDATE_CERTS=False 
     
 )
-
-
