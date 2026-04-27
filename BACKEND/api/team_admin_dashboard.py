@@ -1,7 +1,7 @@
 from fastapi import APIRouter, Request, HTTPException, status, Depends
-from core.security import *
+from core.security import  get_token_func 
 from core.database import Complaints_collection
-from models.UserModel import GetID
+from schemas.UserModel  import GetID
 from bson import ObjectId
 
 team_router = APIRouter()

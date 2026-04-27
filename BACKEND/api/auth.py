@@ -1,14 +1,16 @@
 from fastapi import APIRouter, HTTPException, Request, status, Depends, Response
 from core.database import User_collection
-from models.UserModel import User , OTP_Model
-from core.security import *
+from schemas.UserModel import User , OTP_Model
+from core.security import token_generator_func , hash_password_func , check_password_func
 from services.redis import _redis
-from services.utils import *
+from services.utils import role_gen_func , generate_otp , redis_set_func , cookie_set
 from services.background_task import send_email
 
 
 
 auth_router = APIRouter()
+
+
 
 async def check_token(req:Request):
     token = req.cookies.get("access_token")

@@ -1,8 +1,8 @@
 from fastapi import APIRouter , HTTPException , status , Depends,Response,Request, UploadFile, File, Form
 from fastapi.responses import RedirectResponse
 from core.database import User_collection , Complaints_collection
-from models.UserModel import User
-from core.security import *
+from schemas.UserModel  import User
+from core.security import  get_token_func 
 import jwt , os , uuid , aiofiles
 dash_router = APIRouter()
 

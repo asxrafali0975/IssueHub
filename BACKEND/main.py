@@ -1,8 +1,8 @@
 from fastapi import FastAPI
-from api.authentication.auth import auth_router
+from api.auth import auth_router
 from fastapi.middleware.cors import CORSMiddleware
-from api.dashboard.student_dashboard import dash_router
-from api.dashboard.team_admin_dashboard import team_router
+from api.student_dashboard import dash_router
+from api.team_admin_dashboard import team_router
 from fastapi.staticfiles import StaticFiles
 
 app = FastAPI()

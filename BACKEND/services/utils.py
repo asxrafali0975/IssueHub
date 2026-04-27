@@ -1,6 +1,6 @@
 from random import randint
 from services.redis import _redis
-
+ 
 def role_gen_func(email):
     value = email.split("@")[0][0:4]
     is_year = value.isdigit() and 2000 <= int(value) <= 2099
