@@ -25,7 +25,7 @@ function AdminDashboard() {
                     setError("Server not reachable");
                     return;
                 }
-                const detail = err.response.data.detail; // ✅ safe now
+                const detail = err.response.data.detail; 
                 if (err.response.status === 401) {
                     if (detail === "no permission to access this route") {
                         alert("You don't have permission to access this page");

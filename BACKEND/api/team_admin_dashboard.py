@@ -3,6 +3,7 @@ from core.security import  get_token_func
 from core.database import Complaints_collection
 from schemas.UserModel  import GetID
 from bson import ObjectId
+import jwt
 
 team_router = APIRouter()
 
@@ -18,7 +19,6 @@ async def verify_jwt_token(request: Request):
         )
 
     try:
-        token = token[2:-1]
         payload = get_token_func(token)
         email = payload["email"]
         role = payload["role"]
@@ -53,92 +53,121 @@ async def verify_jwt_token(request: Request):
 
 
 # fetch all complaints
-@team_router.get("/team_dashboard")
+@team_router.get("/team_dashboard" , status_code=status.HTTP_200_OK)
 async def team_dashboard(
     page: int = 1, limit: int = 10, user_data: tuple = Depends(verify_jwt_token)
 ):
-    email, role = user_data
-    if role != "team":
-        raise HTTPException(
+    try:
+        email, role = user_data
+        if role != "team":
+            raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
         )
     
-    skip = (page - 1) * limit
-    complaints = (
+        skip = (page - 1) * limit
+        complaints = (
         await Complaints_collection.find({"forwarded": False})
         .skip(skip)
         .limit(limit)
         .to_list(length=limit)
-    )
+        )
 
-    for c in complaints:
-        c["_id"] = str(c["_id"])
-        c["user_id"] = str(c["user_id"])
+        for c in complaints:
+            c["_id"] = str(c["_id"])
+            c["user_id"] = str(c["user_id"])
 
-    return complaints
+        return complaints
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Internal Server Error")
+    
 
 
 # forward complaint or team dashboard
 # check if token exist , if not exist login if exist check role and etc if role == team then allow else reject
 
 
-@team_router.post("/forward_complaint")
+@team_router.post("/forward_complaint" , status_code=status.HTTP_200_OK)
 async def forward_complaint(id: GetID, user_data: tuple = Depends(verify_jwt_token)):
-    email, role = user_data
-    if role != "team":
-        raise HTTPException(
+    try:
+        email, role = user_data
+        if role != "team":
+            raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
         )
-    cid = id.id
+        cid = id.id
 
-    complaint = await Complaints_collection.find_one({"_id": ObjectId(cid)})
+        complaint = await Complaints_collection.find_one({"_id": ObjectId(cid)})
 
-    if complaint:
+        if complaint:
 
-        await Complaints_collection.update_one(
+            await Complaints_collection.update_one(
             {"_id": ObjectId(cid)}, {"$set": {"forwarded": True}}
         )
 
-        complaint["_id"] = str(complaint["_id"])
-        complaint["user_id"] = str(complaint["user_id"])
-        complaint["forwarded"] = True
+            complaint["_id"] = str(complaint["_id"])
+            complaint["user_id"] = str(complaint["user_id"])
+            complaint["forwarded"] = True
 
-        return complaint
+            return complaint
 
-    return {"message": "Complaint not found"}
+        return {"message": "Complaint not found"}
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@team_router.get("/get_forwarded")
+@team_router.get("/get_forwarded" , status_code=status.HTTP_200_OK)
 async def get_forwarded(user_data: tuple = Depends(verify_jwt_token)):
-    email, role = user_data
+    try:
+        email, role = user_data
 
-    if role != "admin":
-        raise HTTPException(
+        if role != "admin":
+            raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
         )
 
-    complaints = await Complaints_collection.find(
+        complaints = await Complaints_collection.find(
         {"forwarded": True, "status": "pending"}
     ).to_list(length=None)
 
-    for c in complaints:
-        c["_id"] = str(c["_id"])
-        c["user_id"] = str(c["user_id"])
+        for c in complaints:
+            c["_id"] = str(c["_id"])
+            c["user_id"] = str(c["user_id"])
 
-    return complaints
+        return complaints
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
-@team_router.post("/resolve/{cid}")
+@team_router.post("/resolve/{cid}" , status_code=status.HTTP_200_OK)
 async def resolve_complaint(cid: str, user_data: tuple = Depends(verify_jwt_token)):
-    email, role = user_data
+    try:
+        email, role = user_data
 
-    if role != "admin":
-        raise HTTPException(
+        if role != "admin":
+            raise HTTPException(
             status_code=status.HTTP_401_UNAUTHORIZED, detail="no permission to access this route"
         )
 
-    await Complaints_collection.update_one(
+        await Complaints_collection.update_one(
         {"_id": ObjectId(cid)}, {"$set": {"status": "resolved"}}
     )
 
-    return {"message": "Complaint resolved"}
+        return {"message": "Complaint resolved"}
+    except HTTPException:
+        raise
+
+    except Exception as e:
+        print(e)
+        raise HTTPException(status_code=500, detail="Internal Server Error")

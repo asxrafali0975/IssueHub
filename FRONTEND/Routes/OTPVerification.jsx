@@ -22,14 +22,14 @@ function OTPVerification() {
     newOtp[index] = value;
     setOtp(newOtp);
 
-    // Auto move forward
+    
     if (value && index < 5) {
       document.getElementById(`otp-${index + 1}`).focus();
     }
   };
 
   const handleKeyDown = (e, index) => {
-    // Move back on backspace
+  
     if (e.key === "Backspace" && !otp[index] && index > 0) {
       document.getElementById(`otp-${index - 1}`).focus();
     }

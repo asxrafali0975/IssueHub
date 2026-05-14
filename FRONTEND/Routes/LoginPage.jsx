@@ -31,15 +31,6 @@ function LoginPage() {
       return
     }
 
-    
-    // if (trimmedEmail!="team@issuehub.in" &&  !trimmedEmail.endsWith("@axiscolleges.in")) {
-
-    //   setData("Enter Correct Email ")
-    //   setCls("alert alert-warning")
-    //   setalert(true)
-    //   return
-
-    // }
 
     axios.post("http://localhost:8000/auth/SignIn", {
       "email": trimmedEmail,

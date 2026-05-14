@@ -17,7 +17,6 @@ async def verify_jwt_token(request: Request):
         )
 
     try:
-        token = token[2:-1]
         payload = get_token_func(token)
         email = payload["email"]
         role = payload["role"]
@@ -56,7 +55,7 @@ async def verify_jwt_token(request: Request):
 
 from bson import ObjectId
 
-@dash_router.get("/stud_dashboard")
+@dash_router.get("/stud_dashboard" , status_code=status.HTTP_200_OK)
 async def stud_dashboard(user_data: tuple = Depends(verify_jwt_token)):
 
     try:
@@ -80,12 +79,15 @@ async def stud_dashboard(user_data: tuple = Depends(verify_jwt_token)):
 
         return complaints
 
+    except HTTPException:
+        raise
+
     except Exception as e:
         print(e)
         raise HTTPException(status_code=500, detail="Internal Server Error")
     
 
-@dash_router.post("/submit_complaint")
+@dash_router.post("/submit_complaint" , status_code=status.HTTP_201_CREATED)
 async def submit_complaint(
     title: str = Form(...),
     description: str = Form(...),
@@ -149,6 +151,9 @@ async def submit_complaint(
             "message": "Complaint submitted successfully",
             "complaint_id": str(complaint_id),
         }
+    
+    except HTTPException:
+        raise
 
     except Exception as e:
         print(e)

@@ -4,7 +4,7 @@ function ViewComplaint({ data, onClose }) {
   return (
     <div
       className="fixed  inset-0 z-50 flex items-center justify-center bg-black bg-opacity-50 w-full h-screen "
-      onClick={onClose} // ✅ outside click close
+      onClick={onClose} 
     >
 
       <div

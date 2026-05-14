@@ -5,7 +5,7 @@ class User(BaseModel):
     password : str 
 
 class OTP_Model(BaseModel):
-    otp:str  #should be int
+    otp:str 
 
 
 

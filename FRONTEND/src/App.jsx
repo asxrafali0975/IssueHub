@@ -13,12 +13,14 @@ function App() {
   return (
   
       <Routes>
+
         <Route path="/" element={<LoginPage />} />
         <Route path="/register" element={<RegisterPage />} />
         <Route path="/OTP" element={<OTPVerification />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/td" element={<TeamDashboard />} />
         <Route path="/ad" element={<AdminDashboard />} />
+        <Route path="/*" element={<LoginPage />} />
         
         
       </Routes>

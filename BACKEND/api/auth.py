@@ -11,15 +11,9 @@ from services.background_task import send_email
 auth_router = APIRouter()
 
 
+OTP_EXPIRY = 5*60 # 5 minutes 
+SESSION_EXPIRY = 24 * 60 * 60 #one day 
 
-async def check_token(req:Request):
-    token = req.cookies.get("access_token")
-    if token:
-        #redirect to dashboard 
-        #else continue execution
-        return True
-    else:
-        return False
         
 
 @auth_router.post("/SignUp", status_code=status.HTTP_201_CREATED)
@@ -29,7 +23,6 @@ async def RegisterRoute(usr: User,response: Response):
         user_data = usr.model_dump()
         email = user_data["email"]
         password = user_data["password"]
-        
         role =role_gen_func(email)
         user_exists = await User_collection.find_one({"email": email})
 
@@ -38,20 +31,22 @@ async def RegisterRoute(usr: User,response: Response):
         else:
             otp = generate_otp()
 
-            #otp bhej denge celery ko 
+           # OTP is sent to user's email via Celery background worker
 
             resp = send_email.delay(email,otp)
             print(resp)
-            cookie_set(response,"em",email,300)
+            cookie_set(response,"em",email,OTP_EXPIRY)
 
-            #to store data in redis
+            # Store hashed password in Redis with OTP expiry for temporary signup state
 
-            redis_set_func( email, 300, 
+            hashed_password = hash_password_func(password) 
+
+            redis_set_func( email, OTP_EXPIRY, 
             {
                  "email":email,
                 "otp":otp,
                 "role":role,
-                "password":password,
+                "password":hashed_password,
 
             }
             )
@@ -61,6 +56,7 @@ async def RegisterRoute(usr: User,response: Response):
 
     except Exception as e:
         print(e)
+        
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
@@ -76,11 +72,11 @@ async def LoginRoute(usr: User, response: Response):
             hashedpw = user_exists["password"]
             if check_password_func(password, hashedpw):
                 token = token_generator_func(email, user_exists["role"])
-                cookie_set(response,"access_token",token,1000000)
+                cookie_set(response,"access_token",token,SESSION_EXPIRY)
                 return {"role": user_exists["role"]}
             else:
                 raise HTTPException(status_code=401, detail="Wrong email or password")
-        elif not user_exists:
+        else:
             raise HTTPException(status_code=401, detail="Not Registered")
 
     except HTTPException:
@@ -88,6 +84,7 @@ async def LoginRoute(usr: User, response: Response):
 
     except Exception as e:
         print(e)
+        
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 
@@ -119,11 +116,11 @@ async def otp_verify(otp: OTP_Model, response: Response , req : Request):
 
 
         if otp_redis == otp:
-            hashed_password = hash_password_func(password_redis)
+            
             await User_collection.insert_one(
             {
                 "email": email_redis,
-                  "password": hashed_password,
+                  "password": password_redis,
                     "role": role_redis,
                     "complaints":[]
                     
@@ -142,6 +139,7 @@ async def otp_verify(otp: OTP_Model, response: Response , req : Request):
 
     except Exception as e:
         print(e)
+       
         raise HTTPException(status_code=500, detail="Internal Server Error")
 
 

@@ -23,6 +23,9 @@ def redis_set_func(email, exp, data):
         _redis.set(f"{key}:{email}", value, ex=exp)
 
 def cookie_set(resp,key_,value_,time):
+    print(value_)
+    print(type(value_))
+    print(repr(value_))
     resp.set_cookie(
         key=key_,
         value=value_,

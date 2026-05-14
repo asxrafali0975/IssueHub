@@ -76,7 +76,7 @@ function TeamDashboard() {
         Moderation Dashboard
       </h1>
 
-      {/* ✅ Overlay */}
+     
       {selectedComplaint && (
         <ViewComplaint
           data={selectedComplaint}

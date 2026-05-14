@@ -1,4 +1,10 @@
-SECRET_CODE = "#9272ndkhs@(*&2dlnd+108indviw"
-ALGO = "HS256"
-MAIL_USERNAME="ashrafalistudy@gmail.com",
-MAIL_PASSWORD = "advt hkki argw uzik",
+import os
+from dotenv import load_dotenv
+load_dotenv()
+
+SECRET_CODE = os.getenv("SECRET_CODE")
+ALGO = os.getenv("ALGO")
+MAIL_USERNAME=os.getenv("MAIL_USERNAME")
+MAIL_PASSWORD = os.getenv("MAIL_PASSWORD")
+
+
