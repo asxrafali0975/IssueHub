@@ -1,17 +1,16 @@
 from random import randint
 from services.redis import _redis
+from fastapi import HTTPException
  
 def role_gen_func(email):
-    value = email.split("@")[0][0:4]
-    is_year = value.isdigit() and 2000 <= int(value) <= 2099
-    if email.startswith("admin"):
-        return "admin"
-    elif email.startswith("issuehub"):
-        return "team"
-    elif is_year:
-        return "student"
-    else:
-        return "faculty"
+    domain = email.split("@")[-1]
+    local = email.split("@")[0]
+    
+    if domain != "axiscolleges.in":
+        raise HTTPException(status_code=404,  detail="Only institutional email (@axiscolleges.in) is allowed")
+    
+    is_year = local[:4].isdigit() and 2000 <= int(local[:4]) <= 2099
+    return "student" if is_year else "faculty"
 
     
 def generate_otp():
