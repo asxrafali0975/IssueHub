@@ -51,7 +51,7 @@ function OTPVerification() {
           setCls("alert alert-success");
           setTimeout(() => {
             navigate("/"); //change this to /login later on
-          }, 4000);
+          }, 3000);
         } else {
           setData("Unexpected response from server.");
           setCls("alert alert-warning");
