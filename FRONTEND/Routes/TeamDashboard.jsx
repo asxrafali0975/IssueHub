@@ -81,7 +81,7 @@ function TeamDashboard() {
         <ViewComplaint
           data={selectedComplaint}
           onClose={() => setSelectedComplaint(null)}
-        />
+        /> 
       )}
 
       <div className="grid gap-4">
@@ -91,12 +91,13 @@ function TeamDashboard() {
             className="bg-white rounded-xl shadow p-5 border-l-8 border-blue-500"
           >
             <div className="card card-side shadow-sm">
+              {/* <h1>{c.image}</h1> */}
 
               <figure className="bg-red-800  w-[30%]">
                 <img
 
 
-                  src={`http://localhost:8000/${c.image}`}
+                  src={c.image}
                   className="h-[100%] w-[100%]"
                 />
               </figure>

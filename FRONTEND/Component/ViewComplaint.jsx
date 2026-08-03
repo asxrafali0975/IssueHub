@@ -23,7 +23,7 @@ function ViewComplaint({ data, onClose }) {
         {/* Image */}
         {data.image ? (
           <figure>
-            <img src={`http://localhost:8000/${data.image}`} />
+            <img src={data.image} />
           </figure>
         ) : (
           <figure>

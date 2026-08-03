@@ -82,7 +82,7 @@ function AdminDashboard() {
                         </p>
                         {c.image && (
                             <img
-                                src={`http://localhost:8000/${c.image}`}
+                                src={c.image}
                                 alt="evidence"
                                 className="mt-4 w-60 rounded"
                             />

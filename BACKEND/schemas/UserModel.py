@@ -1,16 +1,14 @@
-from pydantic import BaseModel , EmailStr , Field
+from pydantic import BaseModel, EmailStr, Field
+
 
 class User(BaseModel):
-    email : EmailStr
-    password : str 
+    email: EmailStr
+    password: str
 
-class OTP_Model(BaseModel):
-    otp:str 
 
+class OtpModel(BaseModel):
+    otp: str
 
 
 class GetID(BaseModel):
-    id:str
-
-
-
+    id: str
