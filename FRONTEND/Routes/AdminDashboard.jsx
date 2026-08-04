@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ViewComplaint from "../Component/ViewComplaint";
 import { useNavigate } from "react-router";
+import {port} from "../configs/config"
 
 function AdminDashboard() {
     const navigate = useNavigate();
@@ -11,7 +12,7 @@ function AdminDashboard() {
     const [error, setError] = useState("");
 
     useEffect(() => {
-        axios.get("http://localhost:8000/team/get_forwarded", {
+        axios.get(`${port}/team/get_forwarded`, {
             withCredentials: true
         })
             .then((resp) => {
@@ -42,7 +43,7 @@ function AdminDashboard() {
     const resolveComplaint = async (id) => {
         try {
             await axios.post(
-                `http://localhost:8000/team/resolve/${id}`,
+                `${port}/team/resolve/${id}`,
                 {},
                 { withCredentials: true }
             );

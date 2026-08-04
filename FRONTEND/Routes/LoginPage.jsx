@@ -3,6 +3,7 @@ import axios from 'axios'
 import Alert from '../Component/Alert'
 import Navbar from '../Component/Navbar'
 import { useNavigate, Link } from 'react-router'
+import {port} from "../configs/config"
 
 
 
@@ -32,7 +33,7 @@ function LoginPage() {
     }
 
 
-    axios.post("http://localhost:8000/auth/SignIn", {
+    axios.post(`${port}/auth/SignIn`, {
       "email": trimmedEmail,
       "password": trimmedPassword
     }, { withCredentials: true })

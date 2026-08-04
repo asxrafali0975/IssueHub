@@ -4,13 +4,16 @@ from fastapi.middleware.cors import CORSMiddleware
 from api.student_dashboard import dash_router
 from api.team_admin_dashboard import team_router
 from fastapi.staticfiles import StaticFiles
+import os 
+from dotenv import load_dotenv
 
 app = FastAPI()
+load_dotenv()
 
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:5173", "http://127.0.0.1:5173"],  # React app
+    allow_origins=[os.environ.get("allowed_origin_1"), os.environ.get("allowed_origin_2")],  # React app
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],

@@ -3,6 +3,7 @@ import CompStatusGrid from "../Component/CompStatusGrid";
 import RecentSubmissions from "../Component/RecentSubmissions";
 import { useNavigate } from "react-router";
 import axios from "axios";
+import {port} from "../configs/config"
 
 const CATEGORY_OPTIONS = [
   "Select a category...",
@@ -43,7 +44,7 @@ function Dashboard() {
 
   useEffect(() => {
     axios
-      .get("http://localhost:8000/dash/stud_dashboard", {
+      .get(`${port}/dash/stud_dashboard`, {
         withCredentials: true,
       })
       .then((resp) => {
@@ -101,7 +102,7 @@ function Dashboard() {
       }
 
       await axios.post(
-        "http://localhost:8000/dash/submit_complaint",
+        `${port}/dash/submit_complaint`,
         formData,
         {
           withCredentials: true,

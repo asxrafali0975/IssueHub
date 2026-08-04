@@ -3,6 +3,7 @@ import axios from "axios";
 import { useNavigate } from "react-router";
 import Navbar from "../Component/Navbar";
 import Alert from "../Component/Alert";
+import {port} from "../configs/config"
 
 function OTPVerification() {
   const navigate = useNavigate();
@@ -41,7 +42,7 @@ function OTPVerification() {
     const finalOtp = otp.join("");
     setLoading(true);
 
-    axios.post("http://localhost:8000/auth/otpverification", 
+    axios.post(`${port}/auth/otpverification`, 
       { otp: finalOtp }, 
       { withCredentials: true }
     )

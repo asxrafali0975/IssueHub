@@ -2,6 +2,8 @@ import React, { useEffect, useState } from "react";
 import axios from "axios";
 import ViewComplaint from "../Component/ViewComplaint";
 import { useNavigate } from "react-router";
+import {port} from "../configs/config"
+
 function TeamDashboard() {
   const [selectedComplaint, setSelectedComplaint] = useState(null);
   const [complaints, setComplaints] = useState([]);
@@ -15,7 +17,7 @@ function TeamDashboard() {
   const fetchComplaints = async (page) => {
     try {
       const resp = await axios.get(
-        `http://localhost:8000/team/team_dashboard?page=${page}`, { withCredentials: true }
+        `${port}/team/team_dashboard?page=${page}`, { withCredentials: true }
       );
       setComplaints(resp.data);
     } catch (err) {
@@ -52,7 +54,7 @@ function TeamDashboard() {
   const forwardComplaint = async (id) => {
     try {
       await axios.post(
-        `http://localhost:8000/team/forward_complaint`,
+        `${port}/team/forward_complaint`,
         { id },
         { withCredentials: true }
       );

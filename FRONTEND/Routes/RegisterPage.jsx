@@ -3,6 +3,7 @@ import Navbar from '../Component/Navbar'
 import axios from 'axios'
 import Alert from '../Component/Alert'
 import { useNavigate, Link } from 'react-router'
+import {port} from "../configs/config"
 
 function RegisterPage() {
 
@@ -39,7 +40,7 @@ function RegisterPage() {
 
     }
 
-    axios.post("http://localhost:8000/auth/SignUp", {
+    axios.post(`${port}/auth/SignUp`, {
       "email": trimmedEmail,
       "password": trimmedPassword
     }, { withCredentials: true })
