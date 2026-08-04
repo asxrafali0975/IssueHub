@@ -16,7 +16,7 @@ from core.security import get_token_func
 import jwt, os, uuid, aiofiles
 
 dash_router = APIRouter()
-from bson import ObjectId
+
 import cloudinary
 from cloudinary.utils import cloudinary_url
 
