@@ -11,3 +11,4 @@ pymongo==4.17.0
 python-dotenv==1.2.2
 python_bcrypt==0.3.2
 uvicorn==0.40.0
+bcrypt==5.0.0
