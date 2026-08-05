@@ -31,7 +31,7 @@ def cookie_set(resp, key_, value_, time):
         key=key_,
         value=value_,
         httponly=True,
-        secure=False,
-        samesite="lax",
+        secure=True,
+        samesite="none",
         max_age=time,
     )
