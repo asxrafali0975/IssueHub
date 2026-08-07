@@ -3,7 +3,7 @@ import Navbar from '../Component/Navbar'
 import axios from 'axios'
 import Alert from '../Component/Alert'
 import { useNavigate, Link } from 'react-router'
-import {port} from "../configs/config"
+import { port } from "../configs/config"
 
 function RegisterPage() {
 
@@ -20,9 +20,10 @@ function RegisterPage() {
     e.preventDefault()
 
 
-
     const trimmedEmail = email.trim()
     const trimmedPassword = password.trim()
+
+
 
     if (!trimmedEmail || !trimmedPassword) {
       setData("Both Email And Password are Required")
@@ -31,7 +32,9 @@ function RegisterPage() {
       return
     }
 
-    if (!trimmedEmail.endsWith("@axiscolleges.in")) {
+
+
+    if (!trimmedEmail.endsWith("@gmail.com")) {
 
       setData("Enter Correct Email ")
       setCls("alert alert-warning")
@@ -39,6 +42,24 @@ function RegisterPage() {
       return
 
     }
+
+
+
+
+    if (password.length < 8) {
+      setData("Password should be minimum of 8 characters")
+      setCls("alert alert-warning")
+      setalert(true)
+      return   // yahin ruk jao, API call mat karo
+    }
+
+    if (!/\d/.test(password)) {
+      setData("Password should contain at least one number")
+      setCls("alert alert-warning")
+      setalert(true)
+      return
+    }
+
 
     axios.post(`${port}/auth/SignUp`, {
       "email": trimmedEmail,
@@ -128,7 +149,25 @@ function RegisterPage() {
                     type="password"
                     placeholder="Password"
                     autoComplete="new-password"
-                    onChange={(e) => setpassword(e.target.value)}
+                    onChange={(e) => {
+                      const password = e.target.value
+                      setpassword(password)
+
+                      const hasMinLength = password.length >= 8
+                      const hasNumber = /\d/.test(password)
+
+                      if (!hasMinLength) {
+                        setData("Password should be minimum of 8 characters")
+                        setCls("alert alert-warning")
+                        setalert(true)
+                      } else if (!hasNumber) {
+                        setData("Password should contain at least one number")
+                        setCls("alert alert-warning")
+                        setalert(true)
+                      } else {
+                        setalert(false)
+                      }
+                    }}
                     value={password}
                     className="h-12 w-full rounded-xl border border-slate-200 bg-white px-4 text-sm text-slate-900 outline-none transition focus:border-[#1152d4] focus:ring-4 focus:ring-[#1152d4]/15"
                   />

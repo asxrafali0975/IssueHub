@@ -1,11 +1,8 @@
 from fastapi_mail import FastMail, MessageSchema
 from services.mail import conf
-from services.celery import clr_app
-import asyncio
 
 
-@clr_app.task
-def send_email(email, otp):
+async def send_email(email, otp):
     message = MessageSchema(
         subject=f"Otp for IssueHUB",
         recipients=[email],
@@ -13,4 +10,4 @@ def send_email(email, otp):
         subtype="plain",
     )
     fm = FastMail(conf)
-    asyncio.run(fm.send_message(message))
+    await fm.send_message(message)

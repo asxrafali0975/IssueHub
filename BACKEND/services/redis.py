@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 import redis
-
+import os
 app = FastAPI()
 
-_redis = redis.Redis(host="localhost", port=6379, decode_responses=True)
+
+_redis = redis.from_url(os.environ.get("REDIS_URL"),decode_responses=True)

@@ -108,8 +108,8 @@ async def stud_dashboard(user_data: tuple = Depends(verify_jwt_token)):
         raise
 
     except Exception as e:
-        print(e)
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+       
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 import cloudinary.uploader

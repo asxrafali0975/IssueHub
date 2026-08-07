@@ -1,9 +1,23 @@
-from fastapi import APIRouter, HTTPException, Request, status, Depends, Response
+from fastapi import (
+    APIRouter,
+    HTTPException,
+    Request,
+    status,
+    Depends,
+    Response,
+    BackgroundTasks,
+)
 from core.database import User_collection
 from schemas.UserModel import User, OtpModel
 from core.security import token_generator_func, hash_password_func, check_password_func
 from services.redis import _redis
-from services.utils import role_gen_func, generate_otp, redis_set_func, cookie_set
+from services.utils import (
+    role_gen_func,
+    generate_otp,
+    redis_set_func,
+    cookie_set,
+    validate_password,
+)
 from services.background_task import send_email
 
 auth_router = APIRouter()
@@ -14,12 +28,15 @@ SESSION_EXPIRY = 24 * 60 * 60  # one day
 
 
 @auth_router.post("/SignUp", status_code=status.HTTP_201_CREATED)
-async def RegisterRoute(usr: User, response: Response):
+async def RegisterRoute(
+    usr: User, response: Response, background_task: BackgroundTasks
+):
     try:
 
         user_data = usr.model_dump()
         email = user_data["email"]
         password = user_data["password"]
+        validate_password(password)
         role = role_gen_func(email)
         user_exists = await User_collection.find_one({"email": email})
 
@@ -30,9 +47,8 @@ async def RegisterRoute(usr: User, response: Response):
 
             # OTP is sent to user's email via Celery background worker
 
-            resp = send_email.delay(email, otp)
+            background_task.add_task(send_email, email, otp)
 
-            print(resp)
             cookie_set(response, "em", email, OTP_EXPIRY)
 
             # Store hashed password in Redis with OTP expiry for temporary signup state
@@ -56,7 +72,7 @@ async def RegisterRoute(usr: User, response: Response):
     except Exception as e:
         print(e)
 
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @auth_router.post("/SignIn", status_code=status.HTTP_200_OK)
@@ -83,8 +99,7 @@ async def LoginRoute(usr: User, response: Response):
 
     except Exception as e:
         print(e)
-
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        raise HTTPException(status_code=500, detail=str(e))
 
 
 @auth_router.post("/otpverification")
@@ -132,6 +147,4 @@ async def otp_verify(otp: OtpModel, response: Response, req: Request):
         raise
 
     except Exception as e:
-        print(e)
-
-        raise HTTPException(status_code=500, detail="Internal Server Error")
+        raise HTTPException(status_code=500, detail=str(e))

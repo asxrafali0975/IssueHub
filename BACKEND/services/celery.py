@@ -1,7 +1,9 @@
-from celery import Celery
+""" celery is depreceated """
+# from celery import Celery
+# import os
 
-clr_app = Celery(
-    "IssueHub", broker="redis://localhost:6379/0", backend="redis://localhost:6379/0"
-)
+# clr_app = Celery(
+#     "IssueHub", broker=os.environ.get("REDIS_URL"), backend=os.environ.get("REDIS_URL")
+# )
 
-from services.background_task import *
+# from services.background_task import *

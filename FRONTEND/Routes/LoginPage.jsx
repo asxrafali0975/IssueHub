@@ -3,7 +3,7 @@ import axios from 'axios'
 import Alert from '../Component/Alert'
 import Navbar from '../Component/Navbar'
 import { useNavigate, Link } from 'react-router'
-import {port} from "../configs/config"
+import { port } from "../configs/config"
 
 
 
@@ -33,6 +33,7 @@ function LoginPage() {
     }
 
 
+
     axios.post(`${port}/auth/SignIn`, {
       "email": trimmedEmail,
       "password": trimmedPassword
@@ -59,7 +60,7 @@ function LoginPage() {
           setData("Internal Server Error")
         }
         else {
-          setData("Unknown Error")
+          setData(err.response.data.details)
         }
         setCls("alert alert-error")
         setalert(true)
