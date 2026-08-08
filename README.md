@@ -6,7 +6,7 @@ In many colleges, complaints usually move through multiple administrative layers
 
 IssueHub was built to reduce this delay by creating a centralized platform where students can directly raise complaints, track their status, and receive updates in real time.
 
-**🔗 Live Demo:** [[add-your-render-url-here](#)](https://issue-hub-gamma.vercel.app)
+**🔗 Live Demo:** [[Issue-Hub](https://issue-hub-gamma.vercel.app)]
 
 ---
 
