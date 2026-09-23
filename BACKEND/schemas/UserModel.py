@@ -12,3 +12,4 @@ class OtpModel(BaseModel):
 
 class GetID(BaseModel):
     id: str
+ 

@@ -98,6 +98,8 @@ async def team_dashboard(
 
 @team_router.post("/forward_complaint", status_code=status.HTTP_200_OK)
 async def forward_complaint(id: GetID, user_data: tuple = Depends(verify_jwt_token)):
+    
+
     try:
         email, role = user_data
         if role != "team":
